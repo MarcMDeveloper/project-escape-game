@@ -117,12 +117,43 @@ def explore_room(room):
         print(f"There is nothing in {room['name']}.")
 
 # Function to examine an item (doors, furniture, keys)
+
 def examine_item(item_name):
+    """
+    Examine an item which can be a door or furniture.
+    First make sure the intended item belongs to the current room.
+    Then check if the item is a door. Tell player if key hasn't been 
+    collected yet. Otherwise ask player if they want to go to the next
+    room. If the item is not a door, then check if it contains keys.
+    Collect the key if found and update the game state. At the end,
+    play either the current or the next room depending on the game state
+    to keep playing.
+    """
     current_room = game_state["current_room"]
-    found = None
-    for item in object_relations.get(current_room["name"], []):
-        if item["name"] == item_name:
-            found = item
+    next_room = ""
+    output = None
+    
+    for item in object_relations[current_room["name"]]:
+        if(item["name"] == item_name):
+            output = "You examine " + item_name + ". "
+            if(item["type"] == "door"):
+                have_key = False
+                for key in game_state["keys_collected"]:
+                    if(key["target"] == item):
+                        have_key = True
+                if(have_key):
+                    output += "You unlock it with a key you have."
+                    next_room = get_next_room_of_door(item, current_room)
+                else:
+                    output += "It is locked but you don't have the key."
+            else:
+                if(item["name"] in object_relations and len(object_relations[item["name"]])>0):
+                    item_found = object_relations[item["name"]].pop()
+                    game_state["keys_collected"].append(item_found)
+                    output += "You find " + item_found["name"] + "."
+                else:
+                    output += "There isn't anything interesting about it."
+            print(output)
             break
 
     if(output is None):
@@ -131,19 +162,7 @@ def examine_item(item_name):
     if(next_room and input("Do you want to go to the next room? Ener 'yes' or 'no'").strip() == 'yes'):
         play_room(next_room)
     else:
-        if found["type"] == "door":
-            if any(key["target"] == found for key in game_state["keys_collected"]):
-                print(f"You unlock {found['name']} and proceed!")
-                next_room = object_relations[found["name"]][1]
-                if input("Do you want to go to the next room? (yes/no) ").strip().lower() == "yes":
-                    play_room(next_room)
-            else:
-                print(f"{found['name']} is locked. You need a key.")
-        elif found["type"] == "key":
-            game_state["keys_collected"].append(found)
-            print(f"You found {found['name']}!")
-        else:
-            print(f"There is nothing special about {found['name']}.")
-
+        play_room(current_room)
+        
 # Start the game
 start_game()
