@@ -106,6 +106,8 @@ def get_next_room_of_door(door, current_room):
     Return the second room.
     """
     connected_rooms = object_relations[door["name"]]
+    object_relations[door["name"]] = list(reversed(object_relations[door["name"]]))
+    print(object_relations[door["name"]])
     return connected_rooms[1]
 
 # Function to explore a room and list all items inside
@@ -117,7 +119,6 @@ def explore_room(room):
         print(f"There is nothing in {room['name']}.")
 
 # Function to examine an item (doors, furniture, keys)
-
 def examine_item(item_name):
     """
     Examine an item which can be a door or furniture.
@@ -163,6 +164,6 @@ def examine_item(item_name):
         play_room(next_room)
     else:
         play_room(current_room)
-        
+
 # Start the game
 start_game()
