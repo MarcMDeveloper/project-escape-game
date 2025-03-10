@@ -102,14 +102,17 @@ def play_room(room):
 
 # Function to explore a room and list all items inside
 def explore_room(room):
-    print(f"You explore {room['name']} and find: ", end="")
-    items = [item['name'] for item in object_relations[room['name']]]
-    print(", ".join(items) + ".")
+    if room["name"] in object_relations:
+        items = [item['name'] for item in object_relations[room["name"]]]
+        print(f"You explore {room['name']} and find: {', '.join(items)}.")
+    else:
+        print(f"There is nothing in {room['name']}.")
 
 # Function to examine an item (doors, furniture, keys)
 def examine_item(item_name):
     current_room = game_state["current_room"]
     found = None
+
     for item in object_relations.get(current_room["name"], []):
         if item["name"] == item_name:
             found = item
@@ -122,8 +125,7 @@ def examine_item(item_name):
             if any(key["target"] == found for key in game_state["keys_collected"]):
                 print(f"You unlock {found['name']} and proceed!")
                 next_room = object_relations[found["name"]][1]
-                if input("Do you want to go to the next room? (yes/no) ").strip().lower() == "yes":
-                    play_room(next_room)
+                return next_room  # Retornar la nueva habitación
             else:
                 print(f"{found['name']} is locked. You need a key.")
         elif found["type"] == "key":
