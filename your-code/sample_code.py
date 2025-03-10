@@ -100,6 +100,14 @@ def play_room(room):
             play_room(room)
         linebreak()
 
+def get_next_room_of_door(door, current_room):
+    """
+    From object_relations, find the two rooms connected to the given door.
+    Return the second room.
+    """
+    connected_rooms = object_relations[door["name"]]
+    return connected_rooms[1]
+
 # Function to explore a room and list all items inside
 def explore_room(room):
     print(f"You explore {room['name']} and find: ", end="")
