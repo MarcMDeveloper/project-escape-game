@@ -107,7 +107,6 @@ def get_next_room_of_door(door, current_room):
     """
     connected_rooms = object_relations[door["name"]]
     object_relations[door["name"]] = list(reversed(object_relations[door["name"]]))
-    print(object_relations[door["name"]])
     return connected_rooms[1]
 
 # Function to explore a room and list all items inside
