@@ -16,7 +16,9 @@ import time
 import threading
 import os
 import tkinter as tk
-from tkinter import font as tkfont
+from tkinter import font as tkfont 
+import pygame
+
 
 # Game duration in seconds (3 minutes)
 GAME_DURATION = 180
@@ -80,13 +82,10 @@ game_state = {
     "target_room": outside  # The goal is to reach outside
 }
 
-def checkInventory():
-    if len(game_state['keys_collected']) != 0:
-        print("You check your pockets. You have the following keys")
-        for item in game_state['keys_collected']:
-            print(item['name'])
-    else:
-        print("Nothing in your pockets")
+def playMusic():
+    pygame.init()
+    pygame.mixer.music.load("sci-fi-background-258999.mp3")
+    pygame.mixer.music.play()
 
 # Function to print line breaks for better readability
 def linebreak():
@@ -155,7 +154,8 @@ def create_timer_window():
         # Calculate remaining time
         elapsed = time.time() - start_time
         remaining = max(0, GAME_DURATION - elapsed)
-        
+
+
         # Convert to minutes:seconds format
         minutes = int(remaining // 60)
         seconds = int(remaining % 60)
@@ -181,7 +181,7 @@ def create_timer_window():
 
         # Schedule next update
         timer_window.after(500, update_timer)
-
+        
     # Start the timer update
     update_timer()
     
@@ -272,15 +272,12 @@ def play_room(room):
         os._exit(0)  # Exit the program
     else:
         print(f"You are now in {room['name']}")
-        action = input("What do you want to do? 'explore', 'examine', or 'inventory'? ").strip().lower()
+        action = input("What do you want to do? 'explore', 'examine'? ").strip().lower()
         if action == "explore":
             explore_room(room)
             play_room(room)
         elif action == "examine":
             examine_item(input("What would you like to examine? ").strip().lower())
-        elif action == "inventory":
-            checkInventory()
-            play_room(room)
         else:
             print("Invalid command. Type 'explore', 'examine', or 'inventory'.")
             play_room(room)
@@ -292,7 +289,8 @@ def start_game():
     
     # Initialize timer
     start_time = time.time()
-    
+    playMusic()
+
     # Start timer thread
     timer_thread = threading.Thread(target=timer_display, daemon=True)
     timer_thread.start()    
