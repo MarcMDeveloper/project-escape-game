@@ -17,7 +17,6 @@ import threading
 import os
 import tkinter as tk
 from tkinter import font as tkfont 
-import pygame
 
 
 # Game duration in seconds (3 minutes)
@@ -82,10 +81,6 @@ game_state = {
     "target_room": outside  # The goal is to reach outside
 }
 
-def playMusic():
-    pygame.init()
-    pygame.mixer.music.load("sci-fi-background-258999.mp3")
-    pygame.mixer.music.play()
 
 # Function to print line breaks for better readability
 def linebreak():
@@ -289,7 +284,6 @@ def start_game():
     
     # Initialize timer
     start_time = time.time()
-    playMusic()
 
     # Start timer thread
     timer_thread = threading.Thread(target=timer_display, daemon=True)
